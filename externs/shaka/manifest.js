@@ -290,7 +290,7 @@ shaka.extern.HlsAes128Key;
  *   encrypted: boolean,
  *   drmInfos: !Array.<shaka.extern.DrmInfo>,
  *   keyIds: !Set.<string>,
- *   hlsAes128Key: (shaka.extern.HlsAes128Key|undefined),
+ *   hlsAes128Keys: (!Array.<shaka.extern.HlsAes128Key>|undefined),
  *   language: string,
  *   label: ?string,
  *   type: string,
@@ -371,7 +371,7 @@ shaka.extern.HlsAes128Key;
  *   The stream's key IDs as lowercase hex strings. These key IDs identify the
  *   encryption keys that the browser (key system) can use to decrypt the
  *   stream.
- * @property {(shaka.extern.HlsAes128Key|undefined)} hlsAes128Key
+ * @property {!Array.<!shaka.extern.HlsAes128Key>} hlsAes128Keys
  *   <i>Defaults to undefined (i.e., no HLS AES-128 encryption).</i> <br>
  *   The HLS stream's AES-128-CBC full segment encryption key and iv.
  * @property {string} language
