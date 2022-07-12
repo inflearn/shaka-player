@@ -216,6 +216,8 @@ shaka.ui.Overlay = class {
       rewindRates: [-1, -2, -4, -8],
       addSeekBar: true,
       addBigPlayButton: false,
+      fastForwardOnTaps: true,
+      rewindOnTaps: true,
       customContextMenu: false,
       castReceiverAppId: '',
       castAndroidReceiverCompatible: false,
@@ -240,6 +242,14 @@ shaka.ui.Overlay = class {
       forceLandscapeOnFullscreen: true,
       enableTooltips: false,
       keyboardSeekDistance: 5,
+      watermark: {
+        text: '',
+        alpha: 0.2,
+        textShadow: '1px 1px 1px #000',
+        color: '#ffffff',
+        size: '8px',
+        interval: 2000,
+      },
     };
 
     // Check AirPlay support

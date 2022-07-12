@@ -20,6 +20,8 @@ goog.require('shaka.ui.Locales');
 goog.require('shaka.ui.Localization');
 goog.require('shaka.ui.SeekBar');
 goog.require('shaka.ui.Utils');
+goog.require('shaka.ui.HiddenFastForwardButton');
+goog.require('shaka.ui.HiddenRewindButton');
 goog.require('shaka.util.Dom');
 goog.require('shaka.util.EventManager');
 goog.require('shaka.util.FakeEvent');
@@ -155,6 +157,11 @@ shaka.ui.Controls = class extends shaka.util.FakeEventTarget {
       }
     });
 
+    /**
+     * @private {?shaka.util.Timer}
+     */
+    this.watermarkTimer_ = null;
+
     /** @private {?number} */
     this.lastTouchEventTime_ = null;
 
@@ -226,6 +233,11 @@ shaka.ui.Controls = class extends shaka.util.FakeEventTarget {
     if (this.timeAndSeekRangeTimer_) {
       this.timeAndSeekRangeTimer_.stop();
       this.timeAndSeekRangeTimer_ = null;
+    }
+
+    if (this.watermarkTimer_) {
+      this.watermarkTimer_.stop();
+      this.watermarkTimer_ = null;
     }
 
     // Important!  Release all child elements before destroying the cast proxy
@@ -721,6 +733,14 @@ shaka.ui.Controls = class extends shaka.util.FakeEventTarget {
       this.addBufferingSpinner_();
     }
 
+    if (this.config_.fastForwardOnTaps) {
+      this.addFastForwardButtonOnControlsContainer_();
+    }
+
+    if (this.config_.rewindOnTaps) {
+      this.addRewindButtonOnControlsContainer_();
+    }
+
     this.addDaiAdContainer_();
 
     this.addControlsButtonPanel_();
@@ -793,6 +813,72 @@ shaka.ui.Controls = class extends shaka.util.FakeEventTarget {
     this.controlsContainer_.appendChild(scrimContainer);
   }
 
+  /**
+   *
+   * @param {number} min
+   * @param {number} max
+   * @return {number}
+   * @private
+   */
+  getRandomArbitrary_(min, max) {
+    return Math.random() * (max - min) + min;
+  }
+
+  /** @private */
+  addWatermarkContainer_() {
+    const text = this.config_.watermark.text;
+
+    const showWatermarkText = (top, left) => {
+      if (!this.video_ ) {
+        return;
+      }
+
+      if (this.video_.paused && !this.isSeeking_) {
+        return;
+      }
+
+      const $watermark = shaka.util.Dom.createHTMLElement('div');
+
+      $watermark.style.position = 'absolute';
+
+      if (this.config_.watermark.size) {
+        $watermark.style.fontSize = this.config_.watermark.size;
+      }
+
+
+      if (this.config_.watermark.color) {
+        $watermark.style.color = this.config_.watermark.color;
+      }
+
+      if (this.config_.watermark.alpha) {
+        $watermark.style.opacity = this.config_.watermark.alpha;
+      }
+
+      if (this.config_.watermark.textShadow) {
+        $watermark.style.textShadow = this.config_.watermark.textShadow;
+      }
+
+      $watermark.style.top = `${top}%`;
+      $watermark.style.left = `${left}%`;
+
+      $watermark.textContent = text;
+
+      this.controlsContainer_.appendChild($watermark);
+      new shaka.util.Timer(() => {
+        if ($watermark) {
+          $watermark.remove();
+        }
+      }).tickAfter(0.01);
+    };
+
+    const interval = this.config_.watermark.interval;
+
+    this.watermarkTimer_ = new shaka.util.Timer(() => {
+      showWatermarkText(
+          this.getRandomArbitrary_(0, 95), this.getRandomArbitrary_(0, 95));
+    }).tickEvery(interval / 1000);
+  }
+
   /** @private */
   addAdControls_() {
     /** @private {!HTMLElement} */
@@ -842,6 +928,44 @@ shaka.ui.Controls = class extends shaka.util.FakeEventTarget {
     spinnerCircle.setAttribute('stroke-width', '1');
     spinnerCircle.setAttribute('stroke-miterlimit', '10');
     svg.appendChild(spinnerCircle);
+  }
+
+  /**
+   * Add fast-forward button on Controls container
+   * for moving video 5s ahead when the video is
+   * tapped more than once, video seeks ahead 5s
+   * for every extra tap.
+   * @private
+   */
+  addFastForwardButtonOnControlsContainer_() {
+    const hiddenFastForwardContainer = shaka.util.Dom.createHTMLElement('div');
+    hiddenFastForwardContainer.classList.add(
+        'shaka-hidden-fast-forward-container');
+    this.controlsContainer_.appendChild(hiddenFastForwardContainer);
+
+    /** @private {shaka.ui.HiddenFastForwardButton} */
+    this.hiddenFastForwardButton_ =
+        new shaka.ui.HiddenFastForwardButton(hiddenFastForwardContainer, this);
+    this.elements_.push(this.hiddenFastForwardButton_);
+  }
+
+  /**
+   * Add Rewind button on Controls container
+   * for moving video 5s behind when the video is
+   * tapped more than once, video seeks behind 5s
+   * for every extra tap.
+   * @private
+   */
+  addRewindButtonOnControlsContainer_() {
+    const hiddenRewindContainer = shaka.util.Dom.createHTMLElement('div');
+    hiddenRewindContainer.classList.add(
+        'shaka-hidden-rewind-container');
+    this.controlsContainer_.appendChild(hiddenRewindContainer);
+
+    /** @private {shaka.ui.HiddenRewindButton} */
+    this.hiddenRewindButton_ =
+        new shaka.ui.HiddenRewindButton(hiddenRewindContainer, this);
+    this.elements_.push(this.hiddenRewindButton_);
   }
 
   /** @private */
@@ -1024,6 +1148,17 @@ shaka.ui.Controls = class extends shaka.util.FakeEventTarget {
         await this.onScreenRotation_();
       });
     }
+
+    this.eventManager_.listen(document, 'fullscreenchange', () => {
+      if (this.ad_) {
+        this.ad_.resize(
+            this.localVideo_.offsetWidth, this.localVideo_.offsetHeight);
+      }
+    });
+
+    this.eventManager_.listenOnce(this.localVideo_, 'loadeddata', () => {
+      this.addWatermarkContainer_();
+    });
   }
 
 
