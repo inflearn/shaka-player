@@ -1,5 +1,5 @@
 {
-  "name": "shaka-player",
+  "name": "@inflearn/shaka-player",
   "description": "DASH/EME video player library",
   "version": "4.2.0",
   "homepage": "https://github.com/shaka-project/shaka-player",
@@ -84,7 +84,7 @@
   "main": "dist/shaka-player.compiled.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/shaka-project/shaka-player.git"
+    "url": "https://github.com/inflearn/shaka-player.git"
   },
   "bugs": {
     "url": "https://github.com/shaka-project/shaka-player/issues"
@@ -98,5 +98,8 @@
   },
   "engines": {
     "node": ">=14"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
   }
 }
