@@ -1,6 +1,8 @@
 # Changelog
 
-## [4.2.0](https://github.com/shaka-project/shaka-player/compare/v4.1.0...v4.2.0) (2022-08-16)
+## [0.0.2](https://github.com/inflearn/shaka-player/compare/v0.0.2) (2022-08-17)
+
+## [0.0.1](https://github.com/inflearn/shaka-player/compare/v0.0.1) (2022-08-10)
 
 
 ### Features
