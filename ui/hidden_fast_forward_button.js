@@ -13,6 +13,7 @@ goog.require('shaka.util.Dom');
 
 goog.requireType('shaka.ui.Controls');
 
+
 /**
  * @extends {shaka.ui.Element}
  * @final
@@ -32,6 +33,9 @@ shaka.ui.HiddenFastForwardButton = class extends shaka.ui.Element {
     /** @private {?boolean} */
     this.triggeredTouchValid_ = false;
 
+    /** @private {number} */
+    this.TICK_TIME = 0.5;
+
     /**
      * This timer will be used to hide fast forward button on video Container.
      * When the timer ticks it will force button to be invisible.
@@ -47,13 +51,14 @@ shaka.ui.HiddenFastForwardButton = class extends shaka.ui.Element {
     /** @private {!HTMLElement} */
     this.fastforwardContainer_ = shaka.util.Dom.createHTMLElement('div');
     this.fastforwardContainer_.classList.add(
-        'shaka-fast-foward-onControlsContainer');
+        'shaka-fast-forward-oncontrolscontainer');
     this.parent.appendChild(this.fastforwardContainer_);
 
     this.eventManager.listen(
         this.fastforwardContainer_, 'touchstart', (event) => {
-          // prevent the default changes that browser triggers
+        // prevent the default changes that browser triggers
           event.preventDefault();
+          event.stopPropagation();
           // incase any settings menu are open this assigns the first touch
           // to close the menu.
           if (this.controls.anySettingsMenusAreOpen()) {
@@ -61,7 +66,7 @@ shaka.ui.HiddenFastForwardButton = class extends shaka.ui.Element {
           } else {
             this.onFastForwardButtonClick_();
           }
-        });
+        }, {passive: false});
 
     /** @private {!HTMLElement} */
     this.fastForwardValue_ = shaka.util.Dom.createHTMLElement('span');
@@ -71,9 +76,9 @@ shaka.ui.HiddenFastForwardButton = class extends shaka.ui.Element {
     /** @private {!HTMLElement} */
     this.fastforwardIcon_ = shaka.util.Dom.createHTMLElement('span');
     this.fastforwardIcon_.classList.add(
-        'shaka-forward-rewind-onControlsContainer-icon');
+        'shaka-forward-rewind-oncontrolscontainer-icon');
     this.fastforwardIcon_.textContent =
-        shaka.ui.Enums.MaterialDesignIcons.FAST_FORWARD;
+      shaka.ui.Enums.MaterialDesignIcons.FAST_FORWARD;
     this.fastforwardContainer_.appendChild(this.fastforwardIcon_);
   }
 
@@ -89,8 +94,9 @@ shaka.ui.HiddenFastForwardButton = class extends shaka.ui.Element {
     if (!this.triggeredTouchValid_) {
       this.triggeredTouchValid_ = true;
       this.lastTouchEventTimeSet_ = Date.now();
-      this.hideFastForwardButtonOnControlsContainerTimer_.tickAfter(1);
-    } else if (this.lastTouchEventTimeSet_+1000 > Date.now()) {
+      this.hideFastForwardButtonOnControlsContainerTimer_
+          .tickAfter(this.TICK_TIME);
+    } else if (this.lastTouchEventTimeSet_ + 500 > Date.now()) {
       // stops hidding of fast-forward button incase the timmer is active
       // because of previous touch event.
       this.hideFastForwardButtonOnControlsContainerTimer_.stop();
@@ -98,7 +104,8 @@ shaka.ui.HiddenFastForwardButton = class extends shaka.ui.Element {
       this.fastForwardValue_.textContent =
         (parseInt(this.fastForwardValue_.textContent, 10) + 5).toString() + 's';
       this.fastforwardContainer_.style.opacity = '1';
-      this.hideFastForwardButtonOnControlsContainerTimer_.tickAfter(1);
+      this.hideFastForwardButtonOnControlsContainerTimer_
+          .tickAfter(this.TICK_TIME);
     }
   }
 
@@ -107,7 +114,7 @@ shaka.ui.HiddenFastForwardButton = class extends shaka.ui.Element {
    */
   hideFastForwardButtonOnControlsContainer() {
     // prevent adding seek value if its a single tap.
-    if (parseInt(this.fastForwardValue_.textContent, 10) != 0) {
+    if (parseInt(this.fastForwardValue_.textContent, 10) !== 0) {
       this.video.currentTime = this.controls.getDisplayTime() + parseInt(
           this.fastForwardValue_.textContent, 10);
     }
