@@ -54,11 +54,12 @@ shaka.ui.HiddenFastForwardButton = class extends shaka.ui.Element {
         'shaka-fast-forward-oncontrolscontainer');
     this.parent.appendChild(this.fastforwardContainer_);
 
-    this.eventManager.listen(
-        this.fastforwardContainer_, 'touchstart', (event) => {
-        // prevent the default changes that browser triggers
-          event.preventDefault();
-          event.stopPropagation();
+    this.eventManager.listen(this.fastforwardContainer_, 'touchstart',
+        (event) => {
+          // prevent the default changes that browser triggers
+          if (event.cancelable) {
+            event.preventDefault();
+          }
           // incase any settings menu are open this assigns the first touch
           // to close the menu.
           if (this.controls.anySettingsMenusAreOpen()) {
@@ -66,6 +67,12 @@ shaka.ui.HiddenFastForwardButton = class extends shaka.ui.Element {
           } else {
             this.onFastForwardButtonClick_();
           }
+        }, {passive: false});
+
+
+    this.eventManager.listen(
+        this.fastforwardContainer_, 'click', (event) => {
+          event.stopPropagation();
         }, {passive: false});
 
     /** @private {!HTMLElement} */
