@@ -54,8 +54,9 @@ shaka.ui.HiddenRewindButton = class extends shaka.ui.Element {
 
     this.eventManager.listen(this.rewindContainer_, 'touchstart', (event) => {
       // prevent the default changes that browser triggers
-      event.preventDefault();
-      event.stopPropagation();
+      if (event.cancelable) {
+        event.preventDefault();
+      }
       // incase any settings menu are open this assigns the first touch
       // to close the menu.
       if (this.controls.anySettingsMenusAreOpen()) {
@@ -63,7 +64,12 @@ shaka.ui.HiddenRewindButton = class extends shaka.ui.Element {
       } else {
         this.onRewindButtonClick_();
       }
-    });
+    }, {passive: false});
+
+    this.eventManager.listen(
+        this.rewindContainer_, 'click', (event) => {
+          event.stopPropagation();
+        }, {passive: false});
 
     /** @private {!HTMLElement} */
     this.rewindValue_ = shaka.util.Dom.createHTMLElement('span');
@@ -75,7 +81,7 @@ shaka.ui.HiddenRewindButton = class extends shaka.ui.Element {
     this.rewindIcon_.classList.add(
         'shaka-forward-rewind-oncontrolscontainer-icon');
     this.rewindIcon_.textContent =
-        shaka.ui.Enums.MaterialDesignIcons.REWIND;
+      shaka.ui.Enums.MaterialDesignIcons.REWIND;
     this.rewindContainer_.appendChild(this.rewindIcon_);
   }
 
@@ -93,7 +99,7 @@ shaka.ui.HiddenRewindButton = class extends shaka.ui.Element {
       this.lastTouchEventTimeSet_ = Date.now();
       this.hideRewindButtonOnControlsContainerTimer_
           .tickAfter(this.TICK_TIME);
-    } else if (this.lastTouchEventTimeSet_+500 > Date.now()) {
+    } else if (this.lastTouchEventTimeSet_ + 500 > Date.now()) {
       // stops hidding of fast-forward button incase the timmer is active
       // because of previous touch event.
       this.hideRewindButtonOnControlsContainerTimer_.stop();
