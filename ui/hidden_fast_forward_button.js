@@ -56,7 +56,7 @@ shaka.ui.HiddenFastForwardButton = class extends shaka.ui.Element {
 
     this.eventManager.listen(this.fastforwardContainer_, 'touchstart',
         (event) => {
-          // prevent the default changes that browser triggers
+        // prevent the default changes that browser triggers
           if (event.cancelable) {
             event.preventDefault();
           }
@@ -101,9 +101,16 @@ shaka.ui.HiddenFastForwardButton = class extends shaka.ui.Element {
     if (!this.triggeredTouchValid_) {
       this.triggeredTouchValid_ = true;
       this.lastTouchEventTimeSet_ = Date.now();
-      this.hideFastForwardButtonOnControlsContainerTimer_
-          .tickAfter(this.TICK_TIME);
-    } else if (this.lastTouchEventTimeSet_ + 500 > Date.now()) {
+      this.hideFastForwardButtonOnControlsContainerTimer_ =
+        this.getHideTimer_(() => {
+          if (this.ad && this.ad.isLinear()) {
+            this.controls.playPauseAd();
+          } else {
+            this.controls.playPausePresentation();
+          }
+        });
+    } else if (
+      this.lastTouchEventTimeSet_ + this.TICK_TIME * 1000 > Date.now()) {
       // stops hidding of fast-forward button incase the timmer is active
       // because of previous touch event.
       this.hideFastForwardButtonOnControlsContainerTimer_.stop();
@@ -111,9 +118,22 @@ shaka.ui.HiddenFastForwardButton = class extends shaka.ui.Element {
       this.fastForwardValue_.textContent =
         (parseInt(this.fastForwardValue_.textContent, 10) + 5).toString() + 's';
       this.fastforwardContainer_.style.opacity = '1';
-      this.hideFastForwardButtonOnControlsContainerTimer_
-          .tickAfter(this.TICK_TIME);
+      this.hideFastForwardButtonOnControlsContainerTimer_ =
+        this.getHideTimer_();
     }
+  }
+
+  /**
+   * @private
+   */
+  getHideTimer_(callback) {
+    return new shaka.util.Timer(
+        () => {
+          this.hideFastForwardButtonOnControlsContainer();
+          if (callback) {
+            callback();
+          }
+        }).tickAfter(this.TICK_TIME);
   }
 
   /**
