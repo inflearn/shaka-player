@@ -121,6 +121,7 @@ shaka.ui.HiddenRewindButton = class extends shaka.ui.Element {
 
 
   /**
+   * @param {function():void=} callback
    * @private
    */
   getHideTimer_(callback) {
