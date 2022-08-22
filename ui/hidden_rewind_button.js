@@ -97,9 +97,16 @@ shaka.ui.HiddenRewindButton = class extends shaka.ui.Element {
     if (!this.triggeredTouchValid_) {
       this.triggeredTouchValid_ = true;
       this.lastTouchEventTimeSet_ = Date.now();
-      this.hideRewindButtonOnControlsContainerTimer_
-          .tickAfter(this.TICK_TIME);
-    } else if (this.lastTouchEventTimeSet_ + 500 > Date.now()) {
+      this.hideRewindButtonOnControlsContainerTimer_ =
+        this.getHideTimer_(() => {
+          if (this.ad && this.ad.isLinear()) {
+            this.controls.playPauseAd();
+          } else {
+            this.controls.playPausePresentation();
+          }
+        });
+    } else if (
+      this.lastTouchEventTimeSet_ + this.TICK_TIME * 1000 > Date.now()) {
       // stops hidding of fast-forward button incase the timmer is active
       // because of previous touch event.
       this.hideRewindButtonOnControlsContainerTimer_.stop();
@@ -107,9 +114,23 @@ shaka.ui.HiddenRewindButton = class extends shaka.ui.Element {
       this.rewindValue_.textContent =
         (parseInt(this.rewindValue_.textContent, 10) - 5).toString() + 's';
       this.rewindContainer_.style.opacity = '1';
-      this.hideRewindButtonOnControlsContainerTimer_
-          .tickAfter(this.TICK_TIME);
+      this.hideRewindButtonOnControlsContainerTimer_ =
+        this.getHideTimer_();
     }
+  }
+
+
+  /**
+   * @private
+   */
+  getHideTimer_(callback) {
+    return new shaka.util.Timer(
+        () => {
+          this.hideRewindButtonOnControlsContainer();
+          if (callback) {
+            callback();
+          }
+        }).tickAfter(this.TICK_TIME);
   }
 
   /**
