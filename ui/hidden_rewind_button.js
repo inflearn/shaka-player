@@ -68,7 +68,9 @@ shaka.ui.HiddenRewindButton = class extends shaka.ui.Element {
 
     this.eventManager.listen(
         this.rewindContainer_, 'click', (event) => {
-          event.stopPropagation();
+          if (this.isTouchDevice_()) {
+            event.stopPropagation();
+          }
         }, {passive: false});
 
     /** @private {!HTMLElement} */
@@ -117,6 +119,14 @@ shaka.ui.HiddenRewindButton = class extends shaka.ui.Element {
       this.hideRewindButtonOnControlsContainerTimer_ =
         this.getHideTimer_();
     }
+  }
+
+
+  /** @private */
+  isTouchDevice_() {
+    return (('ontouchstart' in window) ||
+      (navigator.maxTouchPoints > 0) ||
+      (navigator.msMaxTouchPoints > 0));
   }
 
 
