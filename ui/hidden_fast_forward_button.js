@@ -72,7 +72,9 @@ shaka.ui.HiddenFastForwardButton = class extends shaka.ui.Element {
 
     this.eventManager.listen(
         this.fastforwardContainer_, 'click', (event) => {
-          event.stopPropagation();
+          if (this.isTouchDevice_()) {
+            event.stopPropagation();
+          }
         }, {passive: false});
 
     /** @private {!HTMLElement} */
@@ -87,6 +89,13 @@ shaka.ui.HiddenFastForwardButton = class extends shaka.ui.Element {
     this.fastforwardIcon_.textContent =
       shaka.ui.Enums.MaterialDesignIcons.FAST_FORWARD;
     this.fastforwardContainer_.appendChild(this.fastforwardIcon_);
+  }
+
+  /** @private */
+  isTouchDevice_() {
+    return (('ontouchstart' in window) ||
+      (navigator.maxTouchPoints > 0) ||
+      (navigator.msMaxTouchPoints > 0));
   }
 
   /**
