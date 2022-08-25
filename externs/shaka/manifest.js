@@ -247,7 +247,7 @@ shaka.extern.CreateSegmentIndexFunction;
 /**
  * @typedef {{
  *   method: string,
- *   cryptoKey: !webCrypto.CryptoKey,
+ *   keyUri: string,
  *   iv: (!Uint8Array|undefined),
  *   firstMediaSequenceNumber: number
  * }}
@@ -257,8 +257,8 @@ shaka.extern.CreateSegmentIndexFunction;
  *
  * @property {string} method
  *   The key method defined in the HLS manifest.
- * @property {!webCrypto.CryptoKey} cryptoKey
- *   Web crypto key object of the AES-128 CBC key.
+ * @property {string} keyUri
+ *   Uri of the AES-128 CBC key.
  * @property {(!Uint8Array|undefined)} iv
  *   The IV in the HLS manifest if defined. See HLS RFC 8216 Section 5.2 for
  *   handling undefined IV.
