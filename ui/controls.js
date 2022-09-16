@@ -790,6 +790,54 @@ shaka.ui.Controls = class extends shaka.util.FakeEventTarget {
     this.controlsContainer_.appendChild(scrimContainer);
   }
 
+  /**
+   *
+   * @param {number} min
+   * @param {number} max
+   * @return {number}
+   * @private
+   */
+  getRandomArbitrary_(min, max) {
+    return Math.random() * (max - min) + min;
+  }
+
+  /** @private */
+  addWatermarkContainer_() {
+    const text = this.config_.watermark.text;
+
+    const showWatermarkText = () => {
+      console.log('is Stop', this.video_.paused && !this.isSeeking_);
+      if (this.video_.paused && !this.isSeeking_) {
+        return;
+      }
+
+      const $watermark = shaka.util.Dom.createHTMLElement('div');
+
+      $watermark.style.position = 'absolute';
+
+      $watermark.style.fontSize = this.config_.watermark.size;
+      $watermark.style.color = this.config_.watermark.color;
+      $watermark.style.opacity = this.config_.watermark.alpha;
+      $watermark.style.textShadow = '1px 1px 1px #000';
+
+      $watermark.style.top = `${this.getRandomArbitrary_(0, 95)}%`;
+      $watermark.style.left = `${this.getRandomArbitrary_(0, 95)}%`;
+
+      $watermark.textContent = text;
+
+      this.controlsContainer_.appendChild($watermark);
+      new shaka.util.Timer(() => {
+        if ($watermark) {
+          $watermark.remove();
+        }
+      }).tickAfter(0.05);
+    };
+
+    new shaka.util.Timer(() => {
+      showWatermarkText();
+    }).tickEvery(this.config_.watermark.interval / 1000);
+  }
+
   /** @private */
   addAdControls_() {
     /** @private {!HTMLElement} */
@@ -1065,6 +1113,10 @@ shaka.ui.Controls = class extends shaka.util.FakeEventTarget {
         this.ad_.resize(
             this.localVideo_.offsetWidth, this.localVideo_.offsetHeight);
       }
+    });
+
+    this.eventManager_.listenOnce(this.localVideo_, 'loadeddata', () => {
+      this.addWatermarkContainer_();
     });
   }
 

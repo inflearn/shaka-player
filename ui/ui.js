@@ -242,6 +242,13 @@ shaka.ui.Overlay = class {
       forceLandscapeOnFullscreen: true,
       enableTooltips: false,
       keyboardSeekDistance: 5,
+      watermark: {
+        text: '',
+        alpha: '0.2',
+        color: '#ffffff',
+        size: '8px',
+        interval: 2000,
+      },
     };
 
     // Check AirPlay support
