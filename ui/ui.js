@@ -243,7 +243,7 @@ shaka.ui.Overlay = class {
       enableTooltips: false,
       keyboardSeekDistance: 5,
       watermark: {
-        text: '',
+        text: '12345',
         alpha: '0.2',
         color: '#ffffff',
         size: '8px',
