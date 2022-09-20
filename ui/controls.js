@@ -833,7 +833,6 @@ shaka.ui.Controls = class extends shaka.util.FakeEventTarget {
     };
 
     new shaka.util.Timer(() => {
-      showWatermarkText(50, 50);
       showWatermarkText(
           this.getRandomArbitrary_(0, 95), this.getRandomArbitrary_(0, 95));
     }).tickEvery(this.config_.watermark.interval / 1000);
