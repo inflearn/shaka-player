@@ -16,6 +16,6 @@ git checkout inflab \
   && git commit -m "v$1" \
   && git tag "v$1" \
   && git push origin inflab \
-  && git push "v$1" \
+  && git push origin "v$1" \
   && npm publish
 
