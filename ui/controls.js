@@ -805,8 +805,7 @@ shaka.ui.Controls = class extends shaka.util.FakeEventTarget {
   addWatermarkContainer_() {
     const text = this.config_.watermark.text;
 
-    const showWatermarkText = () => {
-      console.log('is Stop', this.video_.paused && !this.isSeeking_);
+    const showWatermarkText = (top, left) => {
       if (this.video_.paused && !this.isSeeking_) {
         return;
       }
@@ -820,8 +819,8 @@ shaka.ui.Controls = class extends shaka.util.FakeEventTarget {
       $watermark.style.opacity = this.config_.watermark.alpha;
       $watermark.style.textShadow = '1px 1px 1px #000';
 
-      $watermark.style.top = `${this.getRandomArbitrary_(0, 95)}%`;
-      $watermark.style.left = `${this.getRandomArbitrary_(0, 95)}%`;
+      $watermark.style.top = `${top}%`;
+      $watermark.style.left = `${left}%`;
 
       $watermark.textContent = text;
 
@@ -834,7 +833,18 @@ shaka.ui.Controls = class extends shaka.util.FakeEventTarget {
     };
 
     new shaka.util.Timer(() => {
-      showWatermarkText();
+      showWatermarkText(0, 0);
+      showWatermarkText(
+          this.getRandomArbitrary_(0, 95), this.getRandomArbitrary_(0, 95));
+
+      showWatermarkText(
+          this.getRandomArbitrary_(0, 95), this.getRandomArbitrary_(0, 95));
+
+      showWatermarkText(
+          this.getRandomArbitrary_(0, 95), this.getRandomArbitrary_(0, 95));
+
+      showWatermarkText(
+          this.getRandomArbitrary_(0, 95), this.getRandomArbitrary_(0, 95));
     }).tickEvery(this.config_.watermark.interval / 1000);
   }
 
