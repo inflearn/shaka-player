@@ -814,10 +814,22 @@ shaka.ui.Controls = class extends shaka.util.FakeEventTarget {
 
       $watermark.style.position = 'absolute';
 
-      $watermark.style.fontSize = this.config_.watermark.size;
-      $watermark.style.color = this.config_.watermark.color;
-      $watermark.style.opacity = this.config_.watermark.alpha;
-      $watermark.style.textShadow = this.config_.watermark.textShadow;
+      if (this.config_.watermark.size) {
+        $watermark.style.fontSize = this.config_.watermark.size;
+      }
+
+
+      if (this.config_.watermark.color) {
+        $watermark.style.color = this.config_.watermark.color;
+      }
+
+      if (this.config_.watermark.alpha) {
+        $watermark.style.opacity = this.config_.watermark.alpha;
+      }
+
+      if (this.config_.watermark.textShadow) {
+        $watermark.style.textShadow = this.config_.watermark.textShadow;
+      }
 
       $watermark.style.top = `${top}%`;
       $watermark.style.left = `${left}%`;
@@ -832,10 +844,12 @@ shaka.ui.Controls = class extends shaka.util.FakeEventTarget {
       }).tickAfter(0.01);
     };
 
+    const interval = this.config_.watermark.interval;
+
     new shaka.util.Timer(() => {
       showWatermarkText(
           this.getRandomArbitrary_(0, 95), this.getRandomArbitrary_(0, 95));
-    }).tickEvery(this.config_.watermark.interval / 1000);
+    }).tickEvery(interval / 1000);
   }
 
   /** @private */
