@@ -10,8 +10,8 @@ CHANGELOGS=$(cat CHANGELOG.md | tail -n +3)
 git checkout inflab \
   && git pull origin inflab --rebase \
   && echo -e "# Changelog\n\n## [$1](https://github.com/inflearn/shaka-player/compare/v$1) ($(date +%Y-%m-%d))\n\n$CHANGELOGS" > CHANGELOG.md \
-  && sed -i '' "s/v.....-uncompiled/v$1-uncompiled/g" lib/player.js \
-  && sed -i '' "s/\"version\": \".....\"/\"version\": \"$1\"/g" package.json \
+  && sed -i '' -E "s/'v.+\..+\..+-uncompiled'/'v$1-uncompiled'/g" lib/player.js \
+  && sed -i '' -E "s/\"version\": \".+\..+\..+\"/\"version\": \"$1\"/g" package.json \
   && git add . \
   && git commit -m "v$1" \
   && git tag "v$1" \
