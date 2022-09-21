@@ -60,19 +60,19 @@ shaka.extern.UIVolumeBarColors;
 /**
  * @typedef {{
  *   text: string,
- *   alpha: string,
- *   color: string,
- *   textShadow: string,
- *   size: string,
- *   interval: number
+ *   alpha: (string|undefined),
+ *   color: (string|undefined),
+ *   textShadow: (string|undefined),
+ *   size: (string|undefined),
+ *   interval: (number)
  * }}
  *
  * @property {string} text
- * @property {?string} alpha
- * @property {?string} color
- * @property {?string} textShadow
- * @property {?string} size
- * @property {?number} interval
+ * @property {(string|undefined)} alpha
+ * @property {(string|undefined)} color
+ * @property {(string|undefined)} textShadow
+ * @property {(string|undefined)} size
+ * @property {(number)} interval
  * @exportDoc
  */
 shaka.extern.Watermark;
