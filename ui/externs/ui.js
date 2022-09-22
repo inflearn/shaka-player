@@ -60,7 +60,7 @@ shaka.extern.UIVolumeBarColors;
 /**
  * @typedef {{
  *   text: string,
- *   alpha: (string|undefined),
+ *   alpha: (number|undefined),
  *   color: (string|undefined),
  *   textShadow: (string|undefined),
  *   size: (string|undefined),
@@ -68,7 +68,7 @@ shaka.extern.UIVolumeBarColors;
  * }}
  *
  * @property {string} text
- * @property {(string|undefined)} alpha
+ * @property {(number|undefined)} alpha
  * @property {(string|undefined)} color
  * @property {(string|undefined)} textShadow
  * @property {(string|undefined)} size
