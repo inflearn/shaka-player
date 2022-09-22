@@ -243,8 +243,8 @@ shaka.ui.Overlay = class {
       enableTooltips: false,
       keyboardSeekDistance: 5,
       watermark: {
-        text: '166382 https://www.inflearn.com/copyright',
-        alpha: '0.2',
+        text: '',
+        alpha: 0.2,
         textShadow: '1px 1px 1px #000',
         color: '#ffffff',
         size: '8px',
