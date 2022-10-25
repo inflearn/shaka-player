@@ -157,6 +157,11 @@ shaka.ui.Controls = class extends shaka.util.FakeEventTarget {
       }
     });
 
+    /**
+     * @private {?shaka.util.Timer}
+     */
+    this.watermarkTimer_ = null;
+
     /** @private {?number} */
     this.lastTouchEventTime_ = null;
 
@@ -228,6 +233,11 @@ shaka.ui.Controls = class extends shaka.util.FakeEventTarget {
     if (this.timeAndSeekRangeTimer_) {
       this.timeAndSeekRangeTimer_.stop();
       this.timeAndSeekRangeTimer_ = null;
+    }
+
+    if (this.watermarkTimer_) {
+      this.watermarkTimer_.stop();
+      this.watermarkTimer_ = null;
     }
 
     // Important!  Release all child elements before destroying the cast proxy
@@ -806,7 +816,7 @@ shaka.ui.Controls = class extends shaka.util.FakeEventTarget {
     const text = this.config_.watermark.text;
 
     const showWatermarkText = (top, left) => {
-      if (this.video_.paused && !this.isSeeking_) {
+      if (this.video_ && this.video_.paused && !this.isSeeking_) {
         return;
       }
 
@@ -846,7 +856,7 @@ shaka.ui.Controls = class extends shaka.util.FakeEventTarget {
 
     const interval = this.config_.watermark.interval;
 
-    new shaka.util.Timer(() => {
+    this.watermarkTimer_ = new shaka.util.Timer(() => {
       showWatermarkText(
           this.getRandomArbitrary_(0, 95), this.getRandomArbitrary_(0, 95));
     }).tickEvery(interval / 1000);
