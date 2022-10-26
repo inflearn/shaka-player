@@ -816,7 +816,11 @@ shaka.ui.Controls = class extends shaka.util.FakeEventTarget {
     const text = this.config_.watermark.text;
 
     const showWatermarkText = (top, left) => {
-      if (this.video_ && this.video_.paused && !this.isSeeking_) {
+      if (!this.video_ ) {
+        return;
+      }
+
+      if (this.video_.paused && !this.isSeeking_) {
         return;
       }
 
