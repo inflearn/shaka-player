@@ -1,5 +1,7 @@
 # Changelog
 
+## [0.0.27](https://github.com/inflearn/shaka-player/compare/v0.0.27) (2023-01-12)
+
 ## [0.0.26](https://github.com/inflearn/shaka-player/compare/v0.0.26) (2022-12-20)
 
 ## [0.0.25](https://github.com/inflearn/shaka-player/compare/v0.0.25) (2022-12-08)
